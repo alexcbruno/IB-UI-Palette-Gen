@@ -1,40 +1,130 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        padding: 1rem;
+      }
+
+      .heading {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid black;
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      #generateBtn {
+        margin: 0 0 32px 0;
+      }
+
+      .field-container {
+        display: flex;
+        flex-direction: row;
+        gap: 2rem;
+      }
+
+      .text-entry {
+        display: flex;
+        flex-direction: column;
+        flex-basis: 50%;
+        gap: 1rem;
+        div {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+      }
+
+      .generatedJson {
+        flex-basis: 50%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #generatedJson {
+        border: 1px solid #999;
+        border-radius: 1rem;
+        background-color: #f1f1f1;
+        min-height: 8rem;
+      }
+    </style>
+  </head>
   <body>
-    <h2>Palette Generator</h2>
-    <button id="generateBtn" style="margin-bottom: 16px">
-      Generate Palette
-    </button>
-    <div style="display: flex; gap: 32px">
-      <div class="text-entry" style="display: flex; flex-direction: column">
-        <label for="magenta">Magenta</label>
-        <input class="hexColor" type="text" id="magenta" placeholder="#" />
-        <label for="indigo">Indigo</label>
-        <input class="hexColor" type="text" id="indigo" placeholder="#" />
-        <label for="blue">Blue</label>
-        <input class="hexColor" type="text" id="blue" placeholder="#" />
-        <label for="emerald">Emerald</label>
-        <input class="hexColor" type="text" id="emerald" placeholder="#" />
-        <label for="yellow">Yellow</label>
-        <input class="hexColor" type="text" id="yellow" placeholder="#" />
-        <label for="brown">Brown</label>
-        <input class="hexColor" type="text" id="brown" placeholder="#" />
-        <label for="aqua">Aqua</label>
-        <input class="hexColor" type="text" id="aqua" placeholder="#" />
-        <label for="orange">Orange</label>
-        <input class="hexColor" type="text" id="orange" placeholder="#" />
-        <label for="red">Red</label>
-        <input class="hexColor" type="text" id="red" placeholder="#" />
-        <label for="lime">Lime</label>
-        <input class="hexColor" type="text" id="lime" placeholder="#" />
-        <label for="neutral">Neutral</label>
-        <input class="hexColor" type="text" id="neutral" placeholder="#" />
-        <label for="violet">Violet</label>
-        <input class="hexColor" type="text" id="violet" placeholder="#" />
-        <label for="purple">Purple</label>
-        <input class="hexColor" type="text" id="purple" placeholder="#" />
+    <section class="heading">
+      <h1>Palette Generator</h1>
+      <button id="generateBtn" style="margin-bottom: 16px">
+        Generate Palette
+      </button>
+    </section>
+
+    <div class="field-container">
+      <div class="text-entry">
+        <div>
+          <label for="magenta">Magenta</label>
+          <input class="hexColor" type="text" id="magenta" placeholder="#" />
+        </div>
+
+        <div>
+          <label for="indigo">Indigo</label>
+          <input class="hexColor" type="text" id="indigo" placeholder="#" />
+        </div>
+        <div>
+          <label for="blue">Blue</label>
+          <input class="hexColor" type="text" id="blue" placeholder="#" />
+        </div>
+        <div>
+          <label for="emerald">Emerald</label>
+          <input class="hexColor" type="text" id="emerald" placeholder="#" />
+        </div>
+        <div>
+          <label for="yellow">Yellow</label>
+          <input class="hexColor" type="text" id="yellow" placeholder="#" />
+        </div>
+        <div>
+          <label for="brown">Brown</label>
+          <input class="hexColor" type="text" id="brown" placeholder="#" />
+        </div>
+        <div>
+          <label for="aqua">Aqua</label>
+          <input class="hexColor" type="text" id="aqua" placeholder="#" />
+        </div>
+        <div>
+          <label for="orange">Orange</label>
+          <input class="hexColor" type="text" id="orange" placeholder="#" />
+        </div>
+        <div>
+          <label for="red">Red</label>
+          <input class="hexColor" type="text" id="red" placeholder="#" />
+        </div>
+        <div>
+          <label for="lime">Lime</label>
+          <input class="hexColor" type="text" id="lime" placeholder="#" />
+        </div>
+        <div>
+          <label for="neutral">Neutral</label>
+          <input class="hexColor" type="text" id="neutral" placeholder="#" />
+        </div>
+        <div>
+          <label for="violet">Violet</label>
+          <input class="hexColor" type="text" id="violet" placeholder="#" />
+        </div>
+        <div>
+          <label for="purple">Purple</label>
+          <input class="hexColor" type="text" id="purple" placeholder="#" />
+        </div>
       </div>
-      <pre id="generatedJson"></pre>
+      <div class="generatedJson">
+        <label for="generatedJson">Palette Output</label>
+        <pre id="generatedJson"></pre>
+      </div>
     </div>
 
     <script>

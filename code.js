@@ -1,6 +1,7 @@
 import Color from "color";
+import "./style.css";
 
-figma.showUI(__html__, { width: 480, height: 360 }); // Adjust the UI size as needed
+figma.showUI(__html__, { width: 480, height: 640 }); // Adjust the UI size as needed
 
 // Function to interpolate between two colors remains unchanged
 function interpolateColor(color1, color2, factor) {
