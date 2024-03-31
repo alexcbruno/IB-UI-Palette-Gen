@@ -1,0 +1,14 @@
+{
+  "name": "IB UI Palette Gen v2",
+  "id": "1356143427696463973",
+  "api": "1.0.0",
+  "main": "dist/code.bundle.js",
+  "ui": "ui.html",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  },
+  "documentAccess": "dynamic-page"
+}

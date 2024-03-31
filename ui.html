@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>Palette Generator</h2>
+    <button id="generateBtn" style="margin-bottom: 16px">
+      Generate Palette
+    </button>
+    <div style="display: flex; gap: 32px">
+      <div class="text-entry" style="display: flex; flex-direction: column">
+        <label for="magenta">Magenta</label>
+        <input class="hexColor" type="text" id="magenta" placeholder="#" />
+        <label for="indigo">Indigo</label>
+        <input class="hexColor" type="text" id="indigo" placeholder="#" />
+        <label for="blue">Blue</label>
+        <input class="hexColor" type="text" id="blue" placeholder="#" />
+        <label for="emerald">Emerald</label>
+        <input class="hexColor" type="text" id="emerald" placeholder="#" />
+        <label for="yellow">Yellow</label>
+        <input class="hexColor" type="text" id="yellow" placeholder="#" />
+        <label for="brown">Brown</label>
+        <input class="hexColor" type="text" id="brown" placeholder="#" />
+        <label for="aqua">Aqua</label>
+        <input class="hexColor" type="text" id="aqua" placeholder="#" />
+        <label for="orange">Orange</label>
+        <input class="hexColor" type="text" id="orange" placeholder="#" />
+        <label for="red">Red</label>
+        <input class="hexColor" type="text" id="red" placeholder="#" />
+        <label for="lime">Lime</label>
+        <input class="hexColor" type="text" id="lime" placeholder="#" />
+        <label for="neutral">Neutral</label>
+        <input class="hexColor" type="text" id="neutral" placeholder="#" />
+        <label for="violet">Violet</label>
+        <input class="hexColor" type="text" id="violet" placeholder="#" />
+        <label for="purple">Purple</label>
+        <input class="hexColor" type="text" id="purple" placeholder="#" />
+      </div>
+      <pre id="generatedJson"></pre>
+    </div>
+
+    <script>
+      document.getElementById("generateBtn").onclick = () => {
+        const colorInputs = document.querySelectorAll(".hexColor");
+        const colors = Array.from(colorInputs)
+          .map((input) => ({
+            name: input.id, // Use input ID or another attribute as the color name
+            hex: input.value,
+          }))
+          .filter((color) => color.hex !== ""); // Filter out empty values
+
+        parent.postMessage(
+          { pluginMessage: { type: "generate-palettes", colors: colors } },
+          "*"
+        );
+      };
+
+      // Receive the generated palettes and display them
+      window.onmessage = (event) => {
+        const message = event.data.pluginMessage;
+        if (message.type === "generated-palettes") {
+          document.getElementById("generatedJson").textContent = JSON.stringify(
+            message.palettes,
+            null,
+            2
+          );
+        }
+      };
+    </script>
+  </body>
+</html>
