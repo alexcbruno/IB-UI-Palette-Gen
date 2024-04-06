@@ -106,8 +106,16 @@
         border-radius: var(--radius-interactive);
       }
 
+      select:focus-visible,
+      input:focus-visible {
+        outline: 2px solid var(--ib-red);
+      }
+
       .actionButtons {
+        display: flex;
+        flex-direction: column;
         margin: 0 0 1rem 0;
+        gap: 0.25rem;
       }
 
       button {
@@ -127,6 +135,12 @@
       button:active {
         background-color: var(--ib-darker-red);
         cursor: pointer;
+      }
+
+      button:disabled {
+        background-color: var(--ib-grey-20);
+        color: var(--ib-grey);
+        cursor: not-allowed;
       }
 
       #generateBtn {
@@ -165,9 +179,12 @@
       }
 
       #generatedJson {
-        border: 1px solid var(--ib-grey-50);
+        border: 1px solid var(--ib-grey-20);
         border-radius: var(--radius-interactive);
         min-height: 8rem;
+        max-width: 100%;
+        font-size: 0.75rem;
+        padding: 0.5rem;
       }
     </style>
   </head>
@@ -245,7 +262,8 @@
         <div class="col">
           <h2 class="heading-6">Generate</h2>
           <div class="actionButtons">
-            <button id="generateBtn">Generate Palette</button>
+            <button id="generateBtn">Generate JSON</button>
+            <button id="generateShapesBtn" disabled>Generate swatches</button>
           </div>
           <div class="generatedJson">
             <label for="generatedJson">JSON tokens</label>
@@ -256,6 +274,16 @@
     </div>
 
     <script>
+      document
+        .getElementById("generateShapesBtn")
+        .addEventListener("click", () => {
+          console.log("Generate shapes clicked");
+          parent.postMessage(
+            { pluginMessage: { type: "generate-shapes" } },
+            "*"
+          );
+        });
+
       let selectedDesignSystemName = ""; // Variable to store the currently selected design system name
 
       // On UI load, request the list of design systems from the plugin
@@ -302,6 +330,10 @@
       // Handle messages from the plugin
       window.onmessage = (event) => {
         const message = event.data.pluginMessage;
+
+        if (message.type === "enable-generate-shapes") {
+          document.getElementById("generateShapesBtn").disabled = false;
+        }
 
         if (message.type === "set-design-systems") {
           const selector = document.getElementById("designSystemSelector");
