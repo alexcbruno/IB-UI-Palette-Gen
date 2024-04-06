@@ -80,87 +80,71 @@
     </div>
 
     <script>
+      let selectedDesignSystemName = ""; // Variable to store the currently selected design system name
+    
       // On UI load, request the list of design systems from the plugin
       window.onload = () => {
-        parent.postMessage(
-          { pluginMessage: { type: "request-design-systems" } },
-          "*"
-        );
+        parent.postMessage({ pluginMessage: { type: "request-design-systems" } }, "*");
       };
-
-      // When a design system is selected, request its colors and steps
-      document
-        .getElementById("designSystemSelector")
-        .addEventListener("change", (event) => {
-          parent.postMessage(
-            {
-              pluginMessage: {
-                type: "design-system-selected",
-                systemName: event.target.value,
-              },
-            },
-            "*"
-          );
-        });
-
+    
+      // Listen for changes on the design system selector to update the selected design system name
+      document.getElementById("designSystemSelector").addEventListener("change", (event) => {
+        selectedDesignSystemName = event.target.value; // Update the selected design system name
+        parent.postMessage({
+          pluginMessage: {
+            type: "design-system-selected",
+            systemName: event.target.value,
+          },
+        }, "*");
+      });
+    
+      // When "Generate Palette" button is clicked, collect color inputs and send them back to the plugin
       document.getElementById("generateBtn").onclick = () => {
         const colorInputs = document.querySelectorAll(".hexColor");
-        const colors = Array.from(colorInputs)
-          .map((input) => ({
-            name: input.dataset.colorName, // Extract the color name from the data attribute
-            hex: input.value,
-            step: input.dataset.colorStep, // Extract the color step from the data attribute
-          }))
-          .filter((color) => color.hex !== "");
-
-        parent.postMessage(
-          { pluginMessage: { type: "generate-palettes", colors: colors } },
-          "*"
-        );
+        const colors = Array.from(colorInputs).map((input) => ({
+          systemName: selectedDesignSystemName, // Include the selected design system name
+          colorName: input.id, // Use the input's id as the color name
+          hex: input.value, // Hex value of the color
+        })).filter((color) => color.hex !== "");
+    
+        parent.postMessage({ pluginMessage: { type: "generate-palettes", colors: colors } }, "*");
       };
-
+    
+      // Handle messages from the plugin
       window.onmessage = (event) => {
-    const message = event.data.pluginMessage;
-
-    if (message.type === "set-design-systems") {
-        const selector = document.getElementById("designSystemSelector");
-        // Add a default "Select design system" option
-        selector.innerHTML = `<option value="" disabled selected>Select design system</option>` + 
-            message.designSystems
-                .map((name) => `<option value="${name}">${name}</option>`)
-                .join("");
-    } else if (message.type === "set-design-system-colors") {
-      const colorsContainer = document.querySelector(".text-entry"); // Assuming .text-entry is where you want to append the color inputs
-      colorsContainer.innerHTML = ""; // Clear existing fields
-
-      message.systemConfig.colors.forEach((color) => {
-        // Create the div, label, and input for each color
-        const colorDiv = document.createElement("div");
-        const label = document.createElement("label");
-        label.setAttribute("for", color.name);
-        label.textContent = color.name;
-
-        const input = document.createElement("input");
-        input.setAttribute("type", "text");
-        input.className = "hexColor";
-        input.id = color.name;
-        input.placeholder = "#";
-
-        // Append the label and input to the div
-        colorDiv.appendChild(label);
-        colorDiv.appendChild(input);
-
-        // Append the div to the colors container
-        colorsContainer.appendChild(colorDiv);
-      });
-    } else if (message.type === "generated-palettes") {
-      document.getElementById("generatedJson").textContent = JSON.stringify(
-        message.palettes,
-        null,
-        2
-      );
-    }
-  };
+        const message = event.data.pluginMessage;
+    
+        if (message.type === "set-design-systems") {
+          const selector = document.getElementById("designSystemSelector");
+          // Add a default "Select design system" option
+          selector.innerHTML = `<option value="" disabled selected>Select design system</option>` + 
+              message.designSystems.map((name) => `<option value="${name}">${name}</option>`).join("");
+        } else if (message.type === "set-design-system-colors") {
+          const colorsContainer = document.querySelector(".text-entry");
+          colorsContainer.innerHTML = ""; // Clear existing fields
+    
+          message.systemConfig.colors.forEach((color) => {
+            // Create and append color input fields dynamically
+            const colorDiv = document.createElement("div");
+            const label = document.createElement("label");
+            label.setAttribute("for", color.name);
+            label.textContent = color.name;
+            const input = document.createElement("input");
+            input.setAttribute("type", "text");
+            input.className = "hexColor";
+            input.id = color.name; // Use color name as id
+            input.placeholder = "#";
+            colorDiv.appendChild(label);
+            colorDiv.appendChild(input);
+            colorsContainer.appendChild(colorDiv);
+          });
+        } else if (message.type === "generated-palettes") {
+          document.getElementById("generatedJson").textContent = JSON.stringify(
+            message.palettes, null, 2
+          );
+        }
+      };
     </script>
+    
   </body>
 </html>

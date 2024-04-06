@@ -60,13 +60,25 @@ figma.ui.onmessage = (msg) => {
     let palettesWithName = {};
     msg.colors.forEach((colorInfo) => {
       const systemConfig = designSystemConfigs.find(
-        (system) => system.name === colorInfo.name
+        (system) => system.name === colorInfo.systemName
       );
+      if (!systemConfig) {
+        console.error("Design system not found:", colorInfo.systemName);
+        return;
+      }
       const colorConfig = systemConfig.colors.find(
-        (c) => c.name === colorInfo.name
+        (c) => c.name === colorInfo.colorName
       );
+      if (!colorConfig) {
+        console.error(
+          "Color not found in system:",
+          colorInfo.colorName,
+          colorInfo.systemName
+        );
+        return;
+      }
       const palette = generatePalette(colorInfo.hex, colorConfig.colorSteps);
-      palettesWithName[colorInfo.name] = palette;
+      palettesWithName[colorInfo.colorName] = palette;
     });
 
     figma.ui.postMessage({
