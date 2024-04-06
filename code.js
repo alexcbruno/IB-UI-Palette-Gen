@@ -3,8 +3,6 @@ import "./style.css";
 
 figma.showUI(__html__, { width: 480, height: 640 }); // Adjust the UI size as needed
 
-const Color = require("color");
-
 // Function to interpolate between two colors
 // color1 and color2 are the hex codes of the colors to interpolate between
 // factor is a value between 0 and 1 indicating the interpolation factor
