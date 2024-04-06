@@ -1,5 +1,5 @@
 import Color from "color";
-import "./style.css";
+import designSystemConfigs from "./config/designSystemConfigs.json";
 
 figma.showUI(__html__, { width: 480, height: 640 }); // Adjust the UI size as needed
 
