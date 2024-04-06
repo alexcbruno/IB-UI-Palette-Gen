@@ -16,6 +16,7 @@
         --ib-grey-50: #9c9a9b;
         --ib-grey-20: #d7d7d7;
         --ib-dark-red: #bf122d;
+        --ib-darker-red: #6b1a21;
         --ib-grey-5: #f2f2f2;
         --ib-grey-2: #fafafa;
         --radius-interactive: 0.25rem;
@@ -84,7 +85,7 @@
       select {
         width: 100%;
         padding: 0.5rem 0.75rem;
-        border: 1px solid #ccc;
+        border: 1px solid var(--ib-grey-20);
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
@@ -97,6 +98,12 @@
 
       select:hover {
         cursor: pointer;
+      }
+
+      input {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--ib-grey-20);
+        border-radius: var(--radius-interactive);
       }
 
       .actionButtons {
@@ -117,6 +124,11 @@
         cursor: pointer;
       }
 
+      button:active {
+        background-color: var(--ib-darker-red);
+        cursor: pointer;
+      }
+
       #generateBtn {
         margin: 0;
       }
@@ -129,13 +141,19 @@
 
       .text-entry {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         flex-basis: 50%;
         gap: 1rem;
+        flex-wrap: wrap;
         div {
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
+          max-width: 45%;
+          min-width: 25%;
+          gap: 0.25rem;
+          label {
+            text-transform: capitalize;
+          }
         }
       }
 
@@ -294,8 +312,8 @@
               .map((name) => `<option value="${name}">${name}</option>`)
               .join("");
         } else if (message.type === "set-design-system-colors") {
-          const colorsContainer = document.querySelector(".text-entry");
-          colorsContainer.innerHTML = ""; // Clear existing fields
+          const textEntry = document.querySelector(".text-entry");
+          textEntry.innerHTML = ""; // Clear existing fields
 
           message.systemConfig.colors.forEach((color) => {
             // Create and append color input fields dynamically
@@ -310,7 +328,7 @@
             input.placeholder = "#";
             colorDiv.appendChild(label);
             colorDiv.appendChild(input);
-            colorsContainer.appendChild(colorDiv);
+            textEntry.appendChild(colorDiv);
           });
         } else if (message.type === "generated-palettes") {
           document.getElementById("generatedJson").textContent = JSON.stringify(
