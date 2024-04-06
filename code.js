@@ -1,67 +1,72 @@
 import Color from "color";
 import designSystemConfigs from "./config/designSystemConfigs.json";
 
-figma.showUI(__html__, { width: 480, height: 640 }); // Adjust the UI size as needed
+figma.showUI(__html__, { width: 480, height: 640 });
 
-// Function to interpolate between two colors remains unchanged
+// Function to interpolate between two colors
 function interpolateColor(color1, color2, factor) {
   const result = Color(color1).mix(Color(color2), factor).hex();
   return result;
 }
 
-// Function to generate the palette and produce JSON in the specified schema
-function generatePalette(inputHex) {
+// Function to generate a color palette based on an input color and specific color steps
+function generatePalette(inputHex, colorSteps) {
   try {
-    let palette = new Array(14).fill(null);
+    let palette = [];
     const inputColor = Color(inputHex);
     const lightness = inputColor.lightness();
 
-    // Determine the position of the input color based on its lightness
-    const positionOfInputColor = Math.round((lightness * 13) / 100); // Adjusted for 0-13 range
-
-    palette[positionOfInputColor] = inputColor.hex(); // Place the input hex in its position
-
-    // Interpolate colors before the input color towards black
-    for (let i = 0; i < positionOfInputColor; i++) {
-      const factor = i / positionOfInputColor;
-      palette[i] = interpolateColor("#000000", inputColor.hex(), factor);
-    }
-
-    // Interpolate colors after the input color towards white
-    for (let i = positionOfInputColor + 1; i < 14; i++) {
-      const factor = (i - positionOfInputColor) / (14 - positionOfInputColor);
-      palette[i] = interpolateColor(inputColor.hex(), "#FFFFFF", factor);
-    }
+    // Generate colors based on the provided color steps
+    colorSteps.forEach((step) => {
+      // Assuming the color steps are percentages
+      const adjustedStep = step / 100;
+      const color = interpolateColor("#000000", "#FFFFFF", adjustedStep);
+      palette.push(color);
+    });
 
     // Construct the result object with scale mappings
     let result = {};
-    palette.forEach((color, index) => {
-      const scale = (index + 1) * 100; // Generates scale values (100, 200, ..., 1400)
-      result[scale.toString()] = { value: color, type: "color" };
+    colorSteps.forEach((step, index) => {
+      result[`color${step}`] = { value: palette[index], type: "color" };
     });
 
     return result;
   } catch (error) {
-    console.error("Error generating palette for", inputHex, ":", error);
-    // Prepare error result for each scale if there's an error
+    console.error("Error generating palette:", error);
     let errorResult = {};
-    for (let i = 1; i <= 14; i++) {
-      const scale = i * 100;
-      errorResult[scale.toString()] = { value: "Invalid color", type: "color" };
-    }
+    colorSteps.forEach((step) => {
+      errorResult[`color${step}`] = { value: "Invalid color", type: "color" };
+    });
     return errorResult;
   }
 }
 
-// The message listener and posting logic remain unchanged
+// The message listener to handle messages from the UI
 figma.ui.onmessage = (msg) => {
-  if (msg.type === "generate-palettes" && Array.isArray(msg.colors)) {
-    let palettesWithName = {}; // Object to hold palettes keyed by name
-
-    msg.colors.forEach((color) => {
-      // Assume color is an object {name: "colorName", hex: "#hexValue"}
-      const palette = generatePalette(color.hex);
-      palettesWithName[color.name] = palette; // Nest palette under color name
+  if (msg.type === "request-design-systems") {
+    figma.ui.postMessage({
+      type: "set-design-systems",
+      designSystems: designSystemConfigs.map((system) => system.name),
+    });
+  } else if (msg.type === "design-system-selected") {
+    const systemConfig = designSystemConfigs.find(
+      (system) => system.name === msg.systemName // Corrected from msg.name to msg.systemName
+    );
+    figma.ui.postMessage({
+      type: "set-design-system-colors",
+      systemConfig,
+    });
+  } else if (msg.type === "generate-palettes") {
+    let palettesWithName = {};
+    msg.colors.forEach((colorInfo) => {
+      const systemConfig = designSystemConfigs.find(
+        (system) => system.name === colorInfo.name
+      );
+      const colorConfig = systemConfig.colors.find(
+        (c) => c.name === colorInfo.name
+      );
+      const palette = generatePalette(colorInfo.hex, colorConfig.colorSteps);
+      palettesWithName[colorInfo.name] = palette;
     });
 
     figma.ui.postMessage({
